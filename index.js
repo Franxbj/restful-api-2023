@@ -69,8 +69,13 @@ app.post('/api/products', (req,res) => {
         }
     
         products.push(newProduct);
+
+        const url = `${req.protocol}://${req.get('host')}${req.originalUrl}/${newId}`;
+
+        res.location('http://localhost:5000/api/products' + newId);
     
-        res.json(products); 
+        res.status(201).json(newProduct); 
+        
     }
     
 
