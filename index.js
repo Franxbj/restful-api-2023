@@ -17,6 +17,9 @@ const logTime = (req,res,next) => {
     const minutes = date.getMinutes();
     const seconds = date.getSeconds();
     const time = `${hours}:${minutes}:${seconds}`;
+
+    // add myVar (canbe anything) property to the request object
+    req.myVar = "Some text here"
     
     console.log(`Got a request on ${time}`);
 
@@ -42,6 +45,10 @@ let products = [
 // GET all PRODUCTS
 app.get('/api/products', (req, res) => {
     res.json(products);
+
+    // This one was declared in our custom middleware (logTime)
+    console.log(req.myVar);
+
 });
 
 // GET ONE http://localhost:5000/api/products/2
