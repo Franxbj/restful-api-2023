@@ -2,14 +2,42 @@ const express = require('express');
 
 const app = express();
 
+
+
+
+// Custom Middleware (function) that prints the time to console everytime we get a request
+
+/* function logTime(req,res,next){
+    // function here
+} */
+
+const logTime = (req,res,next) => {
+    const date = new Date();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+    const time = `${hours}:${minutes}:${seconds}`;
+    
+    console.log(`Got a request on ${time}`);
+
+    // Calls the next middleware on a middleware stack
+    next();
+}
+
+// Call the middleware function
+app.use(logTime);
+
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
+
 
 //dummy 'database'
 let products = [   
     { id: 1, name: 'Chair', price: 100 },   
     { id: 2, name: 'Table', price: 200 }   
 ];
+
+
 
 // GET all PRODUCTS
 app.get('/api/products', (req, res) => {
@@ -81,6 +109,32 @@ app.post('/api/products', (req,res) => {
 
 });
 
+
+// UPDATE 
+app.patch('/api/products/:id', (req,res) => {
+    const idToUpdate = Number(req.params.id);
+    const newName = req.body.name;
+    const newPrice = req.body.price;
+    //console.log(newName);
+    //console.log(newPrice);
+    //res.send("ok - still developing");
+
+
+    const product = products.find(product => product.id === idToUpdate)
+    if (product)
+    {
+        product.name = newName;
+        product.price = newPrice;
+
+        res.status(200).json(product)
+    }
+    else 
+    {
+        res.status(400).json({
+            "msg" : "Resource not found"
+        })
+    }
+});
 
 
 const PORT = process.env.PORT || 5000;
